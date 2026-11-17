@@ -2604,10 +2604,12 @@ var qrcode = function() {
   if (isHost) { let code = LS("hz-room"); if (!/^\d{5}$/.test(code || "") || qs.get("new") === "1") { code = String(10000 + Math.floor(Math.random() * 90000)); LS("hz-room", code); } enter(code); }
   else if (/^\d{5}$/.test(hash)) enter(hash);
   else { const g = document.createElement("div"); g.id = "gate";
-    g.innerHTML = '<form id="gateF"><div class="k">The Hashira Project</div><h2>Vào đấu trường</h2><label for="gateC">Mã phòng (5 số trên màn chiếu)<input id="gateC" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="12345"></label><button class="btn big" type="submit">Vào phòng</button><p id="gateE"></p></form>';
+    g.innerHTML = '<form id="gateF"><div class="k">The Hashira Project</div><h2>Vào đấu trường</h2><label for="gateC">Mã phòng (5 số trên màn chiếu)<input id="gateC" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="12345"></label><button class="btn big" type="submit">Vào phòng</button><p id="gateE"></p><button class="btn ghost sm" type="button" id="gateH">Tôi là người tổ chức · mở phòng</button></form>';
     document.body.appendChild(g);
+    g.querySelector("#gateH").addEventListener("click", () => { location.hash = "host"; location.reload(); });
     g.querySelector("form").addEventListener("submit", (ev) => { ev.preventDefault(); const v = document.getElementById("gateC").value.trim();
       if (!/^\d{5}$/.test(v)) { document.getElementById("gateE").textContent = "Mã phòng gồm đúng 5 chữ số."; return; } try { history.replaceState(null, "", "#" + v); } catch (e) {} g.remove(); enter(v); }); }
+  window.addEventListener("hashchange", () => { const h = location.hash.replace(/^#/, ""); if ((h === "host") !== isHost || (/^\d{5}$/.test(h) && h !== room && !isHost)) location.reload(); });
   window.ARENA_STATUS = true;
   window.claude = { use: async (name) => { await ready; return name === "db" ? db : name === "user" ? user : null; } };
 })();
